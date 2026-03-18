@@ -1,11 +1,11 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:recommended",
-        "github>Friedinger/Configs//renovate/base/pin",
-        "github>Friedinger/Configs//renovate/base/gitmoji",
-        "github>Friedinger/Configs//renovate/base/automerge-patch",
-        "github>Friedinger/Configs//renovate/base/automerge-minor-dev-branch",
-        "github>Friedinger/Configs//renovate/base/lockfile-automerge"
-    ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "github>Friedinger/configs//renovate/base/pin",
+    "github>Friedinger/configs//renovate/base/gitmoji",
+    "github>Friedinger/configs//renovate/base/automerge-patch",
+    "github>Friedinger/configs//renovate/base/automerge-minor-dev-branch",
+    "github>Friedinger/configs//renovate/base/lockfile-automerge"
+  ]
 }

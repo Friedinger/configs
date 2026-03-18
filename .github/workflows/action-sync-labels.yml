@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       additional-config:
-        description: 'Additional config file in the repo'
+        description: "Additional config file in the repo"
         required: false
         type: string
 
@@ -27,6 +27,6 @@ jobs:
         uses: EndBug/label-sync@52074158190acb45f3077f9099fea818aa43f97a # v2.3.3
         with:
           config-file: |
-            https://raw.githubusercontent.com/Friedinger/Configs/refs/heads/main/conventions/labels.yml
+            https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/labels.yml
             ${{ inputs.additional-config }}
           delete-other-labels: true
