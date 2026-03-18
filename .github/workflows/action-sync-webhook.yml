@@ -1,0 +1,30 @@
+name: Webhook Sync
+
+on:
+  workflow_call:
+    secrets:
+      WEBHOOK_URL:
+        required: true
+        description: "The URL of the webhook to sync with GitHub events."
+      WEBHOOK_TOKEN:
+        required: true
+        description: "The token used to authenticate with the webhook endpoint."
+
+jobs:
+  webhook-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if secrets are available
+        id: check-secrets
+        run: |
+          echo "secrets_available=${{ secrets.WEBHOOK_TOKEN && secrets.WEBHOOK_URL && 'true' || '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Webhook Sync
+        uses: Friedinger/webhook-sync@eaafb5ce7b1a2849533a84237de230494689363b # v1.0.0
+        if: ${{ steps.check-secrets.outputs.secrets_available }}
+        with:
+          github-token: ${{ secrets.WEBHOOK_TOKEN }}
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          events: "branch_protection_configuration, branch_protection_rule, code_scanning_alert, custom_property_values, dependabot_alert, deploy_key, discussion, dismissal_request_code_scanning, dismissal_request_dependabot, dismissal_request_secret_scanning, exemption_request_push_ruleset, exemption_request_secret_scanning, fork, gollum, issues, member, meta, milestone, public, pull_request, release, repository, repository_advisory, repository_import, repository_ruleset, repository_vulnerability_alert, secret_scanning_alert, secret_scanning_alert_location, secret_scanning_scan, security_and_analysis, star, team_add, watch"
+          content-type: "json"
