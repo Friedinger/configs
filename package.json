@@ -1,6 +1,6 @@
 {
   "name": "friedinger-configs",
-  "description": "Global resources for Friedinger",
+  "description": "Global repository for Friedinger containing shared resources, documentation, configuration templates, and guidelines.",
   "private": true,
   "homepage": "https://github.com/Friedinger/configs#readme",
   "bugs": {
