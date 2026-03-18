@@ -1,5 +1,5 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "labels": ["📌 Dependencies"],
-    "dependencyDashboardLabels": ["📌 Dependencies"]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "labels": ["📌 Dependencies"],
+  "dependencyDashboardLabels": ["📌 Dependencies"]
 }

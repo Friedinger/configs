@@ -4,16 +4,16 @@ This repository contains global resources for Friedinger. It is not a codebase f
 
 ## 🎯 Purpose
 
--   Store general documentation for all projects
--   Provide configuration templates (e.g., Renovate, rulesets)
--   Share contribution guidelines and conventions
--   Host assets for user-wide use
+- Store general documentation for all projects
+- Provide configuration templates (e.g., Renovate, rulesets)
+- Share contribution guidelines and conventions
+- Host assets for user-wide use
 
 ## 🗂️ Structure
 
--   `.github/workflows/action-*.yml`: Reusable GitHub Actions workflows
--   `conventions/`: Coding conventions and best practices
--   `renovate/`: Renovate bot configurations
+- `.github/workflows/action-*.yml`: Reusable GitHub Actions workflows
+- `conventions/`: Coding conventions and best practices
+- `renovate/`: Renovate bot configurations
 
 ## 📄 License
 
