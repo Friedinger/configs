@@ -7,7 +7,7 @@ on:
 
 jobs:
   actionlint:
-    uses: RubberDuckCrew/.github/.github/workflows/action-actionlint.yml@3408baf8692c80185b2f791f8faf0863cead19a2
+    uses: RubberDuckCrew/.github/.github/workflows/action-actionlint.yml@ce18923b2f09dce39930cd8c370ea45c8e58c414
 
   codelint:
     name: Code Lint
