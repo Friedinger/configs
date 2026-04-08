@@ -37,7 +37,7 @@ jobs:
 
   release:
     name: Release
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: [actionlint, codelint]
     runs-on: ubuntu-latest
     permissions:
