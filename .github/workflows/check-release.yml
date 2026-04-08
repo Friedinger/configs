@@ -1,5 +1,5 @@
 name: Check and Release
-run-name: Check and Release ${{ github.event.inputs.version }}
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Check and Release {0}', github.event.inputs.version) || 'Check' }}
 
 on:
   push:
