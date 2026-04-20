@@ -5,6 +5,6 @@
     "github>Friedinger/configs//renovate/base/gitmoji",
     "github>Friedinger/configs//renovate/base/automerge-patch",
     "github>Friedinger/configs//renovate/base/lockfile-automerge",
-    "github>Friedinger/configs//renovate/base/automerge-minor-dev-branch"
+    "github>Friedinger/configs//renovate/base/minimum-release-age"
   ]
 }
