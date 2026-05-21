@@ -1,9 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "minimumReleaseAge": "3 days",
   "packageRules": [
     {
-      "matchUpdateTypes": ["lockFileMaintenance"],
+      "matchSourceUrlPrefixes": ["https://github.com/Friedinger/"],
       "minimumReleaseAge": null
     }
   ]
