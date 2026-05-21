@@ -1,0 +1,46 @@
+name: Enforce conventions
+
+on:
+  workflow_call:
+    inputs:
+      additional-labeler-config:
+        description: "Additional labeler config file in the repo"
+        required: false
+        type: string
+
+jobs:
+  labeler:
+    name: Auto-assign pull request labels
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout additional config
+        if: ${{ inputs.additional-labeler-config }}
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: ${{ inputs.additional-labeler-config }}
+
+      - name: Get Central Config
+        run: curl -s https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/labeler.yml > labeler-config.yml
+
+      - name: Merge Configs
+        if: ${{ inputs.additional-labeler-config }}
+        run: |
+          cat ${{ inputs.additional-labeler-config }} >> labeler-config.yml
+
+      - uses: actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0
+        with:
+          configuration-path: "labeler-config.yml"
+
+  enforce-branch-names:
+    name: Enforce pull request branch names
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enforce pull request branch names
+        uses: IamPekka058/branchMatchRegex@e5d91197f747e71e8006e3cc2e0489faba46c69b # v2.2.1
+        with:
+          path: https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/branches.yml
+          useWildcardPatterns: true
