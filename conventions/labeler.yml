@@ -1,0 +1,20 @@
+"✨ Enhancement":
+  - head-branch: ["^feat/"]
+"🐛 Bug":
+  - head-branch: ["^fix/"]
+"📝 Documentation":
+  - head-branch: ["^docs/"]
+"🧪 Testing":
+  - head-branch: ["^test/"]
+"♻️ Refactor":
+  - head-branch: ["^refactor/"]
+"💄 UI/UX":
+  - head-branch: ["^ui/"]
+"👷 CI/CD":
+  - head-branch: ["^ci/"]
+"🔧 Configuration":
+  - head-branch: ["^config/"]
+"🔒️ Security":
+  - head-branch: ["^security/"]
+"🛠️ Maintenance":
+  - head-branch: ["^chore/"]
