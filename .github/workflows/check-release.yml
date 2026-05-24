@@ -51,6 +51,8 @@ jobs:
             renovate/aggressive-dev.json
             renovate/friedinger.json
           strict: true
+        env:
+          LOG_LEVEL: warn
 
   release:
     name: Release
