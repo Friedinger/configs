@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "packageRules": [
     {
-      "matchSourceUrlPrefixes": ["https://github.com/Friedinger/"],
+      "matchSourceUrls": ["https://github.com/Friedinger/{/,}**"],
       "minimumReleaseAge": null
     }
   ]
