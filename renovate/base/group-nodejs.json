@@ -2,9 +2,16 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "packageRules": [
     {
-      "matchPackageNames": ["node", "actions/setup-node"],
-      "groupName": "Node.js",
-      "groupSlug": "node-js"
+      "commitMessageTopic": "Node.js",
+      "matchDatasources": ["docker", "node-version", "github-releases"],
+      "matchPackageNames": [
+        "/(?:^|/)node$/",
+        "!calico/node",
+        "!docker.io/calico/node",
+        "!ghcr.io/devcontainers/features/node",
+        "!kindest/node",
+        "actions/node-versions"
+      ]
     }
   ]
 }
