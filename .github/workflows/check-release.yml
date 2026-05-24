@@ -50,6 +50,7 @@ jobs:
             renovate/library.json
             renovate/aggressive-dev.json
             renovate/friedinger.json
+          strict: true
 
   release:
     name: Release
