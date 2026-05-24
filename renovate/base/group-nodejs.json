@@ -1,0 +1,10 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "matchPackageNames": ["node", "actions/setup-node"],
+      "groupName": "Node.js",
+      "groupSlug": "node-js"
+    }
+  ]
+}
