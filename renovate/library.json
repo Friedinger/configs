@@ -2,9 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "github>Friedinger/configs//renovate/base/gitmoji",
-    "github>Friedinger/configs//renovate/base/automerge-patch",
-    "github>Friedinger/configs//renovate/base/lockfile-automerge",
-    "github>Friedinger/configs//renovate/base/minimum-release-age"
+    "local>:renovate/base/gitmoji",
+    "local>:renovate/base/automerge-patch",
+    "local>:renovate/base/lockfile-automerge",
+    "local>:renovate/base/minimum-release-age"
   ]
 }
