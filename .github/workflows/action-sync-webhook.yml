@@ -21,7 +21,7 @@ jobs:
           echo "secrets_available=${{ secrets.WEBHOOK_TOKEN && secrets.WEBHOOK_URL && 'true' || '' }}" >> "$GITHUB_OUTPUT"
 
       - name: Webhook Sync
-        uses: Friedinger/webhook-sync@eaafb5ce7b1a2849533a84237de230494689363b # v1.0.0
+        uses: Friedinger/webhook-sync@3df496656bf76d371498d7a300e699b7992671f1 # v1.0.1
         if: ${{ steps.check-secrets.outputs.secrets_available }}
         with:
           github-token: ${{ secrets.WEBHOOK_TOKEN }}
