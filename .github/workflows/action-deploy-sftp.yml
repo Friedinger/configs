@@ -94,16 +94,16 @@ jobs:
         run: |
           set -euo pipefail
           template="$(cat "$HTACCESS_DIR/$ENVIRONMENT.htaccess" "$HTACCESS_DIR/common.htaccess")"
-          if grep -q '${HTPASSWD_PATH}' <<< "$template" && [ -z "$HTPASSWD_PATH" ]; then
+          if grep -qF "\${HTPASSWD_PATH}" <<< "$template" && [ -z "$HTPASSWD_PATH" ]; then
             echo "The secret HTPASSWD_PATH is required for the $ENVIRONMENT deployment"
             exit 1
           fi
-          if grep -q '${DEV_HOST}' <<< "$template" && [ -z "$DEV_HOST" ]; then
+          if grep -qF "\${DEV_HOST}" <<< "$template" && [ -z "$DEV_HOST" ]; then
             echo "The input dev-host is required for the $ENVIRONMENT deployment"
             exit 1
           fi
           export HTPASSWD_PATH DEV_HOST
-          envsubst '${HTPASSWD_PATH} ${DEV_HOST}' <<< "$template" > "$DEPLOY_DIR/.htaccess"
+          envsubst "\${HTPASSWD_PATH} \${DEV_HOST}" <<< "$template" > "$DEPLOY_DIR/.htaccess"
 
       - name: Deploy to server
         env:
