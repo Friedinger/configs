@@ -1,0 +1,160 @@
+name: Deploy via SFTP
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Name of the GitHub environment to deploy to (e.g. dev or prod). Also selects the htaccess variant."
+        type: string
+        required: true
+      artifact-pattern:
+        description: "Glob of the build artifact names to deploy. All matching artifacts are merged into the deploy directory."
+        type: string
+        default: "site*"
+      path:
+        description: "Local directory the artifact is downloaded to and deployed from."
+        type: string
+        default: "dist"
+      remote-dir:
+        description: "Remote target directory."
+        type: string
+        default: "/"
+      exclude-globs:
+        description: "Newline separated globs (lftp --exclude-glob) that are neither uploaded nor deleted on the server, e.g. .htpasswd."
+        type: string
+        default: ""
+      exclude-paths:
+        description: "Newline separated files or directories relative to the deploy directory that are managed on the server and left untouched, e.g. apps or api/config.local.php."
+        type: string
+        default: ""
+      ignore-time-paths:
+        description: "Newline separated paths relative to the deploy directory that are mirrored separately, ignoring modification times (e.g. content hashed assets)."
+        type: string
+        default: ""
+      htaccess-dir:
+        description: "Directory in the repository containing <environment>.htaccess and common.htaccess. When set, .htaccess is composed into the deploy directory."
+        type: string
+        default: ""
+      dev-host:
+        description: "Value for ${DEV_HOST} in the htaccess files. Required when the htaccess files use it."
+        type: string
+        default: ""
+    secrets:
+      SFTP_HOST:
+        required: true
+        description: "Host name of the SFTP server."
+      SFTP_USER:
+        required: true
+        description: "User for the SFTP login."
+      SFTP_PASSWORD:
+        required: true
+        description: "Password for the SFTP login."
+      SFTP_KNOWN_HOSTS:
+        required: true
+        description: "known_hosts entry of the SFTP server."
+      HTPASSWD_PATH:
+        required: false
+        description: "Value for ${HTPASSWD_PATH} in the htaccess files. Required when the htaccess files use it."
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deploy-${{ github.repository }}-${{ inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out htaccess config
+        if: ${{ inputs.htaccess-dir != '' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: ${{ inputs.htaccess-dir }}
+          persist-credentials: false
+
+      - name: Download site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: ${{ inputs.artifact-pattern }}
+          merge-multiple: true
+          path: ./${{ inputs.path }}/
+
+      - name: Compose htaccess
+        if: ${{ inputs.htaccess-dir != '' }}
+        env:
+          HTACCESS_DIR: ${{ inputs.htaccess-dir }}
+          DEPLOY_DIR: ${{ inputs.path }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          HTPASSWD_PATH: ${{ secrets.HTPASSWD_PATH }}
+          DEV_HOST: ${{ inputs.dev-host }}
+        run: |
+          set -euo pipefail
+          template="$(cat "$HTACCESS_DIR/$ENVIRONMENT.htaccess" "$HTACCESS_DIR/common.htaccess")"
+          if grep -q '${HTPASSWD_PATH}' <<< "$template" && [ -z "$HTPASSWD_PATH" ]; then
+            echo "The secret HTPASSWD_PATH is required for the $ENVIRONMENT deployment"
+            exit 1
+          fi
+          if grep -q '${DEV_HOST}' <<< "$template" && [ -z "$DEV_HOST" ]; then
+            echo "The input dev-host is required for the $ENVIRONMENT deployment"
+            exit 1
+          fi
+          export HTPASSWD_PATH DEV_HOST
+          envsubst '${HTPASSWD_PATH} ${DEV_HOST}' <<< "$template" > "$DEPLOY_DIR/.htaccess"
+
+      - name: Deploy to server
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_KNOWN_HOSTS: ${{ secrets.SFTP_KNOWN_HOSTS }}
+          DEPLOY_DIR: ${{ inputs.path }}
+          REMOTE_DIR: ${{ inputs.remote-dir }}
+          EXCLUDE_GLOBS: ${{ inputs.exclude-globs }}
+          EXCLUDE_PATHS: ${{ inputs.exclude-paths }}
+          IGNORE_TIME_PATHS: ${{ inputs.ignore-time-paths }}
+        run: |
+          set -euo pipefail
+
+          find "$DEPLOY_DIR" -type d -exec chmod 755 {} +
+          find "$DEPLOY_DIR" -type f -exec chmod 644 {} +
+
+          sudo NEEDRESTART_SUSPEND=1 apt-get install -y -qq --no-install-recommends lftp \
+            || { sudo apt-get update -qq && sudo NEEDRESTART_SUSPEND=1 apt-get install -y -qq --no-install-recommends lftp; }
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SFTP_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+
+          remote="${REMOTE_DIR%/}"
+          main_args=""
+          extra_mirrors=""
+
+          while IFS= read -r glob; do
+            [ -n "$glob" ] && main_args="$main_args --exclude-glob '$glob'"
+          done <<< "$EXCLUDE_GLOBS"
+
+          while IFS= read -r excluded; do
+            [ -z "$excluded" ] && continue
+            pattern="$(printf '%s' "${excluded#/}" | sed 's/[][\\.*^$+?(){}|]/\\&/g')"
+            main_args="$main_args --exclude '^${pattern%/}(/|\$)'"
+          done <<< "$EXCLUDE_PATHS"
+
+          while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+            dir="${dir#/}"
+            main_args="$main_args --exclude '^$dir/'"
+            extra_mirrors="$extra_mirrors
+          mirror --reverse --delete --ignore-time --overwrite --verbose --parallel=4 '$DEPLOY_DIR/$dir' '$remote/$dir'"
+          done <<< "$IGNORE_TIME_PATHS"
+
+          lftp -u "$SFTP_USER","$SFTP_PASSWORD" "sftp://$SFTP_HOST" <<EOF
+          set cmd:fail-exit yes
+          set net:max-retries 3
+          set net:timeout 30
+          set sftp:connect-program "ssh -a -x -o StrictHostKeyChecking=yes"
+          mirror --reverse --delete --overwrite --verbose --parallel=4 $main_args '$DEPLOY_DIR/' '${remote:-/}'
+          $extra_mirrors
+          bye
+          EOF
