@@ -20,7 +20,7 @@ on:
         type: string
         default: "/"
       exclude-globs:
-        description: "Newline separated globs (lftp --exclude-glob) that are neither uploaded nor deleted on the server, e.g. .htpasswd."
+        description: "Newline separated globs (lftp --exclude-glob) that are neither uploaded nor deleted on the server, e.g. .htpasswd or .htgroup."
         type: string
         default: ""
       exclude-paths:
@@ -52,9 +52,9 @@ on:
       SFTP_KNOWN_HOSTS:
         required: true
         description: "known_hosts entry of the SFTP server."
-      HTPASSWD_PATH:
+      HTAUTH_DIR:
         required: false
-        description: "Value for ${HTPASSWD_PATH} in the htaccess files. Required when the htaccess files use it."
+        description: "Folder on the server holding .htpasswd and .htgroup, value for ${HTAUTH_DIR} in the htaccess files. Required when the htaccess files use it."
 
 permissions:
   contents: read
@@ -89,21 +89,21 @@ jobs:
           HTACCESS_DIR: ${{ inputs.htaccess-dir }}
           DEPLOY_DIR: ${{ inputs.path }}
           ENVIRONMENT: ${{ inputs.environment }}
-          HTPASSWD_PATH: ${{ secrets.HTPASSWD_PATH }}
+          HTAUTH_DIR: ${{ secrets.HTAUTH_DIR }}
           DEV_HOST: ${{ inputs.dev-host }}
         run: |
           set -euo pipefail
           template="$(cat "$HTACCESS_DIR/$ENVIRONMENT.htaccess" "$HTACCESS_DIR/common.htaccess")"
-          if grep -qF "\${HTPASSWD_PATH}" <<< "$template" && [ -z "$HTPASSWD_PATH" ]; then
-            echo "The secret HTPASSWD_PATH is required for the $ENVIRONMENT deployment"
+          if grep -qF "\${HTAUTH_DIR}" <<< "$template" && [ -z "$HTAUTH_DIR" ]; then
+            echo "The secret HTAUTH_DIR is required for the $ENVIRONMENT deployment"
             exit 1
           fi
           if grep -qF "\${DEV_HOST}" <<< "$template" && [ -z "$DEV_HOST" ]; then
             echo "The input dev-host is required for the $ENVIRONMENT deployment"
             exit 1
           fi
-          export HTPASSWD_PATH DEV_HOST
-          envsubst "\${HTPASSWD_PATH} \${DEV_HOST}" <<< "$template" > "$DEPLOY_DIR/.htaccess"
+          export HTAUTH_DIR DEV_HOST
+          envsubst "\${HTAUTH_DIR} \${DEV_HOST}" <<< "$template" > "$DEPLOY_DIR/.htaccess"
 
       - name: Deploy to server
         env:
