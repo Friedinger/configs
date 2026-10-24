@@ -31,6 +31,10 @@ on:
         description: "Newline separated paths relative to the deploy directory that are mirrored separately, ignoring modification times (e.g. content hashed assets)."
         type: string
         default: ""
+      parallel:
+        description: "Number of files lftp transfers in parallel per mirror. Lower it when the server limits concurrent SFTP sessions."
+        type: number
+        default: 4
       htaccess-dir:
         description: "Directory in the repository containing <environment>.htaccess and common.htaccess. When set, .htaccess is composed into the deploy directory."
         type: string
@@ -116,6 +120,7 @@ jobs:
           EXCLUDE_GLOBS: ${{ inputs.exclude-globs }}
           EXCLUDE_PATHS: ${{ inputs.exclude-paths }}
           IGNORE_TIME_PATHS: ${{ inputs.ignore-time-paths }}
+          PARALLEL: ${{ inputs.parallel }}
         run: |
           set -euo pipefail
 
@@ -146,7 +151,7 @@ jobs:
             dir="${dir#/}"
             main_args="$main_args --exclude '^$dir/'"
             extra_mirrors="$extra_mirrors
-          mirror --reverse --delete --ignore-time --overwrite --verbose --parallel=4 '$DEPLOY_DIR/$dir' '$remote/$dir'"
+          mirror --reverse --delete --ignore-time --overwrite --verbose --parallel=$PARALLEL '$DEPLOY_DIR/$dir' '$remote/$dir'"
           done <<< "$IGNORE_TIME_PATHS"
 
           lftp -u "$SFTP_USER","$SFTP_PASSWORD" "sftp://$SFTP_HOST" <<EOF
@@ -154,7 +159,7 @@ jobs:
           set net:max-retries 3
           set net:timeout 30
           set sftp:connect-program "ssh -a -x -o StrictHostKeyChecking=yes"
-          mirror --reverse --delete --overwrite --verbose --parallel=4 $main_args '$DEPLOY_DIR/' '${remote:-/}'
+          mirror --reverse --delete --overwrite --verbose --parallel=$PARALLEL $main_args '$DEPLOY_DIR/' '${remote:-/}'
           $extra_mirrors
           bye
           EOF
