@@ -11,22 +11,20 @@ This directory contains configuration files for the Renovate bot, which is used 
 
 ## Structure
 
-The files in this directory are generated and must not be edited by hand. The sources live in `src/` (building blocks in `src/base/`), and `build.mjs` resolves all `extends` of this repository into standalone files. This way a tag like `#v1.3.1` contains everything and no preset points to `main`.
+The top-level files in this directory (`recommended.json` etc.) are generated and must not be edited or committed by hand. The sources live in `src/` (building blocks in `src/base/`) and reference each other with `@/`, which points to `src/`. `build.mjs` resolves all of them into standalone files, so a tag like `#v1.3.1` contains everything and no preset points to `main`.
 
-After changing a source file, regenerate the configs and commit them together with the change:
+CI builds and commits the generated files on `main` and again when releasing, before the tag is created. Feature branches must not change them (CI fails otherwise). To try a change locally, run:
 
 ```bash
 npm run renovate:build
 ```
 
-The CI checks that the generated files are up to date (`npm run renovate:check`).
-
 ## Validation
 
-To validate changes on these configs, we have a GitHub Action set up in the `.github/workflows/check-release.yml` workflow. It checks for syntax errors and ensures that the configurations adhere to best practices before any release is made.
+To validate changes on these configs, we have a GitHub Action set up in the `.github/workflows/check-release.yml` workflow. It builds the configs and checks them for syntax errors before any release is made.
 
 To run the validation locally, you can use the following command:
 
 ```bash
-npx --yes --package renovate -- renovate-config-validator renovate/<config-name>.json
+npx --yes --package renovate -- renovate-config-validator --strict renovate/<config-name>.json
 ```

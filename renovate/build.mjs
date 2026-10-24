@@ -1,6 +1,6 @@
 // Resolves the presets in renovate/src into standalone files in renovate/,
 // so a tag like v1.3.1 contains everything and no preset points to main.
-// Usage: node renovate/build.mjs [--check]
+// Usage: node renovate/build.mjs
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,7 +8,6 @@ import * as prettier from "prettier";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const srcDir = join(root, "src");
-const check = process.argv.includes("--check");
 
 const isObject = (value) =>
   value !== null && typeof value === "object" && !Array.isArray(value);
@@ -65,7 +64,6 @@ function resolve(name, stack = []) {
 const sources = readdirSync(srcDir).filter((file) => file.endsWith(".json"));
 const schema = "https://docs.renovatebot.com/renovate-schema.json";
 const prettierConfig = (await prettier.resolveConfig(root)) ?? {};
-let outdated = false;
 
 for (const file of sources) {
   const name = file.replace(/\.json$/, "");
@@ -73,19 +71,6 @@ for (const file of sources) {
     JSON.stringify({ $schema: schema, ...resolve(name) }),
     { ...prettierConfig, parser: "json" },
   );
-  const target = join(root, file);
-  let current = null;
-  try {
-    current = readFileSync(target, "utf8");
-  } catch {}
-  if (current === output) continue;
-  if (check) {
-    console.error(`renovate/${file} is outdated, run: npm run renovate:build`);
-    outdated = true;
-  } else {
-    writeFileSync(target, output);
-    console.log(`Generated renovate/${file}`);
-  }
+  writeFileSync(join(root, file), output);
+  console.log(`Generated renovate/${file}`);
 }
-
-process.exit(outdated ? 1 : 0);

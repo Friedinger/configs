@@ -15,8 +15,7 @@
   "scripts": {
     "lint": "prettier . --check",
     "fix": "prettier . --write",
-    "renovate:build": "node renovate/build.mjs",
-    "renovate:check": "node renovate/build.mjs --check"
+    "renovate:build": "node renovate/build.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.10"
