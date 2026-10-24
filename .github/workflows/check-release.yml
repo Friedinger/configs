@@ -47,7 +47,7 @@ jobs:
       - name: Verify generated configs were not changed locally
         if: github.ref != 'refs/heads/main'
         run: |
-          git diff --quiet "$(git merge-base origin/main HEAD)" HEAD -- ':(glob)renovate/*.json' || {
+          git diff --quiet --diff-filter=ACMRT "$(git merge-base origin/main HEAD)" HEAD -- ':(glob)renovate/*.json' || {
             echo "renovate/*.json must not be committed in feature branches; they are built and committed by CI on main."
             exit 1
           }
