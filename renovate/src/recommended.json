@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    "@/base/pin",
+    "@/base/gitmoji",
+    "@/base/automerge-patch",
+    "@/base/automerge-digest",
+    "@/base/lockfile-automerge",
+    "@/base/minimum-release-age"
+  ]
+}

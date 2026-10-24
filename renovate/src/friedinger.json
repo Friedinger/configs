@@ -1,0 +1,9 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "matchSourceUrls": ["https://github.com/Friedinger/{/,}**"],
+      "minimumReleaseAge": null
+    }
+  ]
+}

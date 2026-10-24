@@ -14,7 +14,9 @@
   "author": "Friedinger",
   "scripts": {
     "lint": "prettier . --check",
-    "fix": "prettier . --write"
+    "fix": "prettier . --write",
+    "renovate:build": "node renovate/build.mjs",
+    "renovate:check": "node renovate/build.mjs --check"
   },
   "devDependencies": {
     "prettier": "3.9.10"
