@@ -124,6 +124,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          if ! [[ "$PARALLEL" =~ ^[0-9]+$ ]] || [ "$PARALLEL" -lt 1 ] || [ "$PARALLEL" -gt 64 ]; then
+            echo "The input parallel must be an integer from 1 to 64"
+            exit 1
+          fi
+
           find "$DEPLOY_DIR" -type d -exec chmod 755 {} +
           find "$DEPLOY_DIR" -type f -exec chmod 644 {} +
 
