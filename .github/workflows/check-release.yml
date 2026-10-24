@@ -41,12 +41,34 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Verify generated configs were not changed locally
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git diff --quiet --diff-filter=ACMRT "$(git merge-base origin/main HEAD)" HEAD -- ':(glob)renovate/*.json' || {
+            echo "renovate/*.json must not be committed in feature branches; they are built and committed by CI on main."
+            exit 1
+          }
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: mise.toml
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Renovate configs
+        run: npm run renovate:build
 
       - name: Get Renovate config files
         id: config-files
         run: |
           set -euo pipefail
-          files=$(git ls-files -- "renovate/*.json")
+          files=$(find renovate -maxdepth 1 -name '*.json' | sort)
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           {
             echo "files<<$EOF"
@@ -61,6 +83,36 @@ jobs:
           strict: true
         env:
           LOG_LEVEL: warn
+
+  commit-build:
+    name: Commit Renovate Build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [actionlint, codelint, renovate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: mise.toml
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Renovate configs
+        run: npm run renovate:build
+
+      - name: Commit Renovate configs
+        uses: suzuki-shunsuke/commit-action@5eaa5ecce3ffe93d09a85b946dc5136e3713b1b7 # v1.1.0
+        with:
+          commit_message: "📦 Update Renovate configs [skip ci]"
+          files: ":(glob)renovate/*.json"
+          fail_on_self_push: false
 
   release:
     name: Release
@@ -82,6 +134,25 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: mise.toml
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Renovate configs
+        run: npm run renovate:build
+
+      - name: Commit Renovate configs
+        uses: suzuki-shunsuke/commit-action@5eaa5ecce3ffe93d09a85b946dc5136e3713b1b7 # v1.1.0
+        with:
+          commit_message: "🔖 Release v${{ env.VERSION }} [skip ci]"
+          files: ":(glob)renovate/*.json"
+          fail_on_self_push: false
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3

@@ -1,0 +1,4 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["@/recommended", "@/base/automerge-minor-dev-branch"]
+}

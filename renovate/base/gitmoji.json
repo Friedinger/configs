@@ -1,7 +1,0 @@
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>Friedinger/configs//renovate/base/gitmoji-messages.json",
-    "github>Friedinger/configs//renovate/base/gitmoji-labels.json"
-  ]
-}

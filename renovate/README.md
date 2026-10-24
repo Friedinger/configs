@@ -4,17 +4,27 @@ This directory contains configuration files for the Renovate bot, which is used 
 
 ## Available Configurations
 
-- `recommended.json`: A general-purpose config with balanced update frequency and risk management.
-- `library.json`: Tailored for libraries, focusing on stability and less frequent updates.
-- `aggressive-dev.json`: For development projects that want to stay on the cutting edge with more frequent updates.
-- `friedinger.json`: A custom config for Friedinger projects, optimized for our specific needs.
+- `recommended.json`: For applications. Based on `config:best-practices`, pins dependencies and GitHub Action digests, uses gitmoji commit messages, waits 3 days after a release, and automerges patch updates, digests and lockfile maintenance.
+- `library.json`: For libraries. Same as `recommended.json`, but it does not pin dependencies, so the ranges of runtime dependencies stay untouched (dev dependencies are still pinned by `config:best-practices`).
+- `automerge-dev.json`: `recommended.json` plus branch automerge (no PR) for minor and patch updates of dev dependencies.
+- `friedinger.json`: Skips the release age wait for packages from Friedinger repositories. Use it in addition to one of the configs above.
+
+## Structure
+
+The top-level files in this directory (`recommended.json` etc.) are generated and must not be edited or committed by hand. The sources live in `src/` (building blocks in `src/base/`) and reference each other with `@/`, which points to `src/`. `build.mjs` resolves all of them into standalone files, so a release tag (e.g. `#v1.4.0`) contains everything and no preset points to `main`.
+
+CI builds and commits the generated files on `main` and again when releasing, before the tag is created. Feature branches must not change them (CI fails otherwise). To try a change locally, run:
+
+```bash
+npm run renovate:build
+```
 
 ## Validation
 
-To validate changes on these configs, we have a GitHub Action set up in the `.github/workflows/check-release.yml` workflow. It checks for syntax errors and ensures that the configurations adhere to best practices before any release is made.
+To validate changes on these configs, we have a GitHub Action set up in the `.github/workflows/check-release.yml` workflow. It builds the configs and checks them for syntax errors before any release is made.
 
 To run the validation locally, you can use the following command:
 
 ```bash
-npx --yes --package renovate -- renovate-config-validator renovate/<config-name>.json
+npx --yes --package renovate -- renovate-config-validator --strict renovate/<config-name>.json
 ```

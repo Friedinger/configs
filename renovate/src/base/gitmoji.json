@@ -1,6 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "lockFileMaintenance": {
-    "enabled": true
-  }
+  "extends": ["@/base/gitmoji-messages", "@/base/gitmoji-labels"]
 }
