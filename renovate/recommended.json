@@ -25,7 +25,14 @@
     },
     { "matchUpdateTypes": ["patch"], "automerge": true },
     { "matchUpdateTypes": ["digest"], "automerge": true },
-    { "matchUpdateTypes": ["lockFileMaintenance"], "minimumReleaseAge": null }
+    { "matchUpdateTypes": ["lockFileMaintenance"], "minimumReleaseAge": null },
+    {
+      "description": "Update the Node.js version in mise.toml and @types/node together",
+      "groupName": "node",
+      "matchPackageNames": ["node", "@types/node"],
+      "matchManagers": ["mise", "npm"],
+      "matchUpdateTypes": ["major"]
+    }
   ],
   "commitMessagePrefix": "⬆️",
   "commitMessageAction": "Upgrade",
