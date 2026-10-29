@@ -5,6 +5,7 @@
     "@/base/gitmoji",
     "@/base/automerge-patch",
     "@/base/lockfile-automerge",
-    "@/base/minimum-release-age"
+    "@/base/minimum-release-age",
+    "@/base/node-major"
   ]
 }

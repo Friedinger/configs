@@ -4,7 +4,7 @@ This directory contains configuration files for the Renovate bot, which is used 
 
 ## Available Configurations
 
-- `recommended.json`: For applications. Based on `config:best-practices`, pins dependencies and GitHub Action digests, uses gitmoji commit messages, waits 3 days after a release, and automerges patch updates, digests and lockfile maintenance.
+- `recommended.json`: For applications. Based on `config:best-practices`, pins dependencies and GitHub Action digests, uses gitmoji commit messages, waits 3 days after a release, automerges patch updates, digests and lockfile maintenance, and updates the Node.js major version (`mise.toml`) together with `@types/node` in one PR.
 - `library.json`: For libraries. Same as `recommended.json`, but it does not pin dependencies, so the ranges of runtime dependencies stay untouched (dev dependencies are still pinned by `config:best-practices`).
 - `automerge-dev.json`: `recommended.json` plus branch automerge (no PR) for minor and patch updates of dev dependencies.
 - `friedinger.json`: Skips the release age wait for packages from Friedinger repositories. Use it in addition to one of the configs above.

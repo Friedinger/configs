@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Update the Node.js version in mise.toml and @types/node together",
+      "groupName": "node",
+      "matchPackageNames": ["node", "@types/node"],
+      "matchManagers": ["mise", "npm"],
+      "matchUpdateTypes": ["major"]
+    }
+  ]
+}
