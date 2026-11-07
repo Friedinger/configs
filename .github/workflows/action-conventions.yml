@@ -42,10 +42,9 @@ jobs:
 
     steps:
       - name: Enforce pull request branch names
-        uses: michisec/branchMatchRegex@97d9e63e70c806499d05e6021f0df2d6cf74f44a # v3.0.0
+        uses: michisec/branchMatchRegex@8a0a1e893b03449f268d7983d7350a187f963b01 # v3.1.0
         with:
           path: https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/branches.yml
           useWildcardPatterns: true
-          commentOnUnmatchedPattern: true
           comment: |
             Your branch `{branch}` doesn't quite match our expected naming conventions: {patterns}
