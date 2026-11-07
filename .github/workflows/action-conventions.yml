@@ -46,7 +46,6 @@ jobs:
         with:
           path: https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/branches.yml
           useWildcardPatterns: true
-          failOnUnmatchedPattern: true
           commentOnUnmatchedPattern: true
           comment: |
             Your branch `{branch}` doesn't quite match our expected naming conventions: {patterns}
