@@ -1,5 +1,5 @@
 "✨ Enhancement":
-  - head-branch: ["^feat/"]
+  - head-branch: ["^feature/"]
 "🐛 Bug":
   - head-branch: ["^fix/"]
 "📝 Documentation":
