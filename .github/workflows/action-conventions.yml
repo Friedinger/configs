@@ -37,10 +37,15 @@ jobs:
   enforce-branch-names:
     name: Enforce pull request branch names
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Enforce pull request branch names
-        uses: IamPekka058/branchMatchRegex@e5d91197f747e71e8006e3cc2e0489faba46c69b # v2.2.1
+        uses: michisec/branchMatchRegex@97d9e63e70c806499d05e6021f0df2d6cf74f44a # v3.0.0
         with:
           path: https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/branches.yml
           useWildcardPatterns: true
+          commentOnUnmatchedPattern: true
+          comment: |
+            Your branch `{branch}` doesn't quite match our expected naming conventions: {patterns}
