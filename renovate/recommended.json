@@ -36,9 +36,11 @@
   ],
   "commitMessagePrefix": "⬆️",
   "commitMessageAction": "Upgrade",
-  "dependencyDashboardTitle": "📌 Dependency Dashboard",
+  "dependencyDashboard": {
+    "title": "📌 Dependency Dashboard",
+    "labels": ["📌 Dependencies"]
+  },
   "labels": ["📌 Dependencies"],
-  "dependencyDashboardLabels": ["📌 Dependencies"],
   "lockFileMaintenance": { "enabled": true, "automerge": true },
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
