@@ -3,5 +3,15 @@
   "extends": [
     "github>Friedinger/configs//renovate/recommended.json",
     "github>Friedinger/configs//renovate/friedinger.json"
+  ],
+  "customManagers": [
+    {
+      "description": "Update versions annotated with a renovate comment in workflow inputs",
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>\\S+?)\\s+[A-Za-z0-9_-]+?:\\s*[\"']?(?<currentValue>[^\\s\"']+?)[\"']?\\s"
+      ]
+    }
   ]
 }
