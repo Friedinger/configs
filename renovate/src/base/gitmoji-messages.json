@@ -14,5 +14,5 @@
   ],
   "commitMessagePrefix": "⬆️",
   "commitMessageAction": "Upgrade",
-  "dependencyDashboardTitle": "📌 Dependency Dashboard"
+  "dependencyDashboard": { "title": "📌 Dependency Dashboard" }
 }
