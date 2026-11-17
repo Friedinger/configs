@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: Enforce pull request branch names
-        uses: michisec/branchMatchRegex@8a0a1e893b03449f268d7983d7350a187f963b01 # v3.1.0
+        uses: michisec/branchMatchRegex@0f083cfc0f9929c80df1565f013e12fb8e90d817 # v3.1.1
         with:
           path: https://raw.githubusercontent.com/Friedinger/configs/refs/heads/main/conventions/branches.yml
           useWildcardPatterns: true
