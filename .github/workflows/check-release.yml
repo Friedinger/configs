@@ -82,7 +82,7 @@ jobs:
           config_file_path: ${{ steps.config-files.outputs.files }}
           strict: true
           # renovate: datasource=npm depName=@suzuki-shunsuke/renovate-config-validator
-          validator_version: 44.258.1
+          validator_version: 44.259.1
         env:
           LOG_LEVEL: warn
 
